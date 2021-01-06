@@ -15,23 +15,21 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// IPFSClient will write new documents to IPFS and read existing documents from IPFS based on CID.
+// Client will write new documents to IPFS and read existing documents from IPFS based on CID.
 // It implements Sidetree CAS interface.
-type IPFSClient struct {
-	client *shell.Shell
+type Client struct {
+	ipfs *shell.Shell
 }
 
 // New creates cas client.
-func New(url string) *IPFSClient {
-	c := shell.NewShell(url)
-
-	return &IPFSClient{client: c}
+func New(ipfs *shell.Shell) *Client {
+	return &Client{ipfs: ipfs}
 }
 
 // Write writes the given content to CAS.
 // returns cid which represents the address of the content.
-func (m *IPFSClient) Write(content []byte) (string, error) {
-	cid, err := m.client.Add(bytes.NewReader(content))
+func (m *Client) Write(content []byte) (string, error) {
+	cid, err := m.ipfs.Add(bytes.NewReader(content))
 	if err != nil {
 		return "", err
 	}
@@ -43,8 +41,8 @@ func (m *IPFSClient) Write(content []byte) (string, error) {
 
 // Read reads the content for the given CID from CAS.
 // returns the contents of CID.
-func (m *IPFSClient) Read(cid string) ([]byte, error) {
-	reader, err := m.client.Cat(cid)
+func (m *Client) Read(cid string) ([]byte, error) {
+	reader, err := m.ipfs.Cat(cid)
 	if err != nil {
 		return nil, err
 	}
