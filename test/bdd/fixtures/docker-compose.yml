@@ -1,0 +1,39 @@
+#
+# Copyright SecureKey Technologies Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+version: '2'
+
+services:
+
+  sidetree:
+    container_name: sidetree
+    image: ${SIDETREE_IPFS_FIXTURE_IMAGE}:latest
+    environment:
+      - SIDETREE_IPFS_TLS_CERTIFICATE=/etc/sidetree/tls/ec-pubCert.pem
+      - SIDETREE_IPFS_TLS_KEY=/etc/sidetree/tls/ec-key.pem
+      - SIDETREE_IPFS_HOST=0.0.0.0
+      - SIDETREE_IPFS_PORT=48326
+      - SIDETREE_IPFS_DID_NAMESPACE=did:orb
+      - SIDETREE_IPFS_DID_ALIASES=did:alias.com,did:domain.com
+      - SIDETREE_IPFS_DID_METHOD_CONTEXT=
+      - SIDETREE_IPFS_CAS_URL=ipfs:5001
+      - SIDETREE_IPFS_DID_BASE_ENABLED=true
+    ports:
+      - 48326:48326
+    volumes:
+      - ./keys/tls:/etc/sidetree/tls
+    depends_on:
+      - ipfs
+
+  ipfs:
+    container_name: ipfs
+    #this image doesn't work on ARM64 yet
+    image: ipfs/go-ipfs
+    environment:
+      - IPFS_PATH=/data/ipfs
+    volumes:
+      - ./data/ipfs:/data/ipfs
+    ports:
+      - "5001:5001"

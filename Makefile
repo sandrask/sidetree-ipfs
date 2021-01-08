@@ -45,7 +45,7 @@ lint:
 unit-test:
 	@scripts/unit.sh
 
-all: clean checks unit-test
+all: clean checks unit-test bdd-test
 
 sidetree-ipfs:
 	@echo "Building sidetree-ipfs"
@@ -77,10 +77,11 @@ generate-test-keys:
 		--entrypoint "/opt/workspace/sidetree-ipfs/scripts/generate_test_keys.sh" \
 		frapsoft/openssl
 
-bdd-test: generate-test-keys sidetree-ipfs-docker
+bdd-test: generate-test-keys  sidetree-ipfs-docker
 	@scripts/integration.sh
 
 clean:
 	rm -Rf ./.build
 	rm -Rf ./test/bdd/docker-compose.log
 	rm -Rf ./test/bdd/fixtures/keys/tls
+	rm -Rf ./test/bdd/fixtures/data
